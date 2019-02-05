@@ -1,5 +1,12 @@
 
+// simple config
+const config = {
+    connectionString: 'mongodb://localhost:27017/db',
+    chromePath: 'D:/Programs/chrome-win/chrome.exe',
+}
+
 module.exports = {
+    getConfig: () => config,
     // simple delay
     asyncDelay: t => new Promise(resolve => setTimeout(resolve, t)),
 

@@ -2,7 +2,9 @@ const cheerio = require('cheerio')
 const puppeteer = require('puppeteer')
 const mongoose = require('mongoose')
 
-mongoose.connect('mongodb://localhost:27017/db', {
+const utils = require('./_utils')
+
+mongoose.connect(utils.getConfig().connectionString, {
     useCreateIndex: true,
     useNewUrlParser: true,
 })
@@ -14,7 +16,6 @@ const proposalPageStrategy = require('./strategies/proposal')
 const userProfilePageStrategy = require('./strategies/userProfile')
 const proposalIndexPageStrategy = require('./strategies/proposalIndex')
 
-const utils = require('./_utils')
 
 const domain = 'https://granddebat.fr';
 
@@ -27,7 +28,7 @@ const domain = 'https://granddebat.fr';
 (async () => {
     const browser = await puppeteer.launch({
         // headless: false,
-        executablePath: 'D:/Programs/chrome-win/chrome.exe',
+        executablePath: utils.getConfig().chromePath,
     }).catch((err) => {
         console.log('browser crashed maybe', err)
         process.exit()

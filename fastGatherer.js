@@ -1,7 +1,9 @@
 const puppeteer = require('puppeteer')
 const mongoose = require('mongoose')
 
-mongoose.connect('mongodb://localhost:27017/db', {
+const utils = require('./_utils')
+
+mongoose.connect(utils.getConfig().connectionString, {
     useCreateIndex: true,
     useNewUrlParser: true,
 })
@@ -12,8 +14,6 @@ require('./models/category') // load the schema that's all...
 
 const proposalPageStrategy = require('./strategies/proposal')
 const userProfilePageStrategy = require('./strategies/userProfile')
-
-const utils = require('./_utils')
 
 const PROCESS_NUM = 4;
 
