@@ -3,7 +3,8 @@ Grand-web-scraper
 
 This is a not very optimized scraper.
 This scraper is suspected to never be able to get all of the info (and the gathering process is probably worse than `f(x)=ln(x)`).
-The scraper randomize the source and methods of action to be sure to get as many data as possible.
+The scraper randomly selects filter and sort option in the index page to get as many data as possible.
+It's programmed to have 10% to check for last entries so the scraper can be continuously run.
 
 Installation
 ------------

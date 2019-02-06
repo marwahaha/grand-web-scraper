@@ -68,7 +68,7 @@ const domain = 'https://granddebat.fr';
         })
     // resource not found?
     if (dest.status() !== 200) {
-        const waitDelay = 3e3 // 15 seconds
+        const waitDelay = 3e3 // seconds
         console.log(`page.goto error ${dest.status()}...waiting ${waitDelay / 1e3} sec before closing...`)
         await utils.asyncDelay(waitDelay)
         browserClose(page)
@@ -83,7 +83,7 @@ const domain = 'https://granddebat.fr';
     const links = $('main div > div > a')
 
     if (links.length === 0) {
-        const waitDelay = 45e3 // 15 seconds
+        const waitDelay = 45e3 // seconds
         console.log(`unable to read main page...waiting ${waitDelay / 1e3} sec before closing...`)
         await utils.asyncDelay(waitDelay)
         browserClose(page)

@@ -144,7 +144,7 @@ module.exports = async (page, closeFn, url, categoryName) => {
     })
     if (closing) return
     let category = categoryFound
-    if (!categoryFound) {
+    if (!category) {
         category = await Category.create({ baseUrl, name: statsObject.categoryName }).catch(() => {
             statsObject.failReason = 'no new category'
             getOut()
@@ -166,7 +166,7 @@ module.exports = async (page, closeFn, url, categoryName) => {
         const userFound = await User.findOne({ name: username }).catch(() => { _quit_ = true })
         if (_quit_) continue
         let user = userFound
-        if (!userFound) {
+        if (!user) {
             user = await User.create({ name: username }).catch(() => { _quit_ = true })
             if (_quit_) continue
             statsObject.newUserNumber += 1

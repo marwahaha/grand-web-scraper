@@ -68,10 +68,12 @@ const PROCESS_NUM = 4;
                 }
             }
 
+            const rule = { infoFetched: { $ne: true }, deleted: { $ne: true } }
+
             calls++
-            User.find({ infoFetched: { $ne: true } }, handleResolve)
+            User.find(rule, handleResolve)
             calls++
-            Proposal.find({ infoFetched: { $ne: true } }, handleResolve).populate('category')
+            Proposal.find(rule, handleResolve).populate('category')
         })
         return p
     })().catch(console.log)
@@ -81,7 +83,7 @@ const PROCESS_NUM = 4;
     const process = async (__page__) => {
         let pageTreatedNumber = 0
         setInterval(() => {
-            const pageTreatedPerHour = Math.round(pageTreatedNumber / 6 * 100)
+            const pageTreatedPerHour = Math.round(pageTreatedNumber / 6 * 100) / 100
             pageTreatedNumber = 0
             console.log(`speed is ${pageTreatedPerHour} req/h`)
         }, 10 * 60e3) // 10min
