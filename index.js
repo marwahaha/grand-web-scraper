@@ -129,10 +129,12 @@ const domain = 'https://granddebat.fr';
                     }
                 }
 
+                const rule = { infoFetched: { $ne: true }, deleted: { $ne: true } }
+
                 calls++
-                User.find({ infoFetched: { $ne: true } }, handleResolve).limit(50)
+                User.find(rule, handleResolve).limit(25)
                 calls++
-                Proposal.find({ infoFetched: { $ne: true } }, handleResolve).populate('category').limit(50)
+                Proposal.find(rule, handleResolve).populate('category').limit(25)
             })
             return p
         })().catch(console.log)

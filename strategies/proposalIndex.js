@@ -85,7 +85,7 @@ module.exports = async (page, closeFn, url, categoryName) => {
     if (roll < 5) { // 5% check first (shouldn't change much)
         await page.select(sortingSelector, 'old')
         statsObject.sortOption = 'old'
-    } else if (roll < 15) { // 10% to be sure to check last posts sometimes
+    } else if (roll < 35) { // 30% to be sure to check last posts sometimes
         await page.select(sortingSelector, 'last')
         statsObject.sortOption = 'last'
     } // 85% chance to leave it to 'random'
