@@ -44,8 +44,8 @@ module.exports = async (page, closeFn, url, proposalId) => {
         const $QnA = $('#proposal-page-tabs-pane-content .block > div')
         const QnA = []
         for (let i = $QnA.length - 1; i >= 0; i--) {
-            const question = $QnA[i].children[0].children[0].data
-            const answer = $QnA[i].children[1].children[0].data
+            const question = $($QnA[i].children[0]).text()
+            const answer = $($QnA[i].children[1]).text()
             if (question) {
                 QnA.push({ question, answer })
             }
