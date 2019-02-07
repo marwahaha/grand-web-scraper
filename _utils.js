@@ -3,10 +3,12 @@
 const config = {
     connectionString: 'mongodb://localhost:27017/db',
     chromePath: 'D:/Programs/chrome-win/chrome.exe',
+    testMode: false,
 }
 
 module.exports = {
     getConfig: () => config,
+    setTestMode: () => { config.testMode = true },
     // simple delay
     asyncDelay: t => new Promise(resolve => setTimeout(resolve, t)),
 

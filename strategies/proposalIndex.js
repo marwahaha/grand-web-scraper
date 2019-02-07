@@ -42,9 +42,17 @@ module.exports = async (page, closeFn, url, categoryName) => {
         statsObject.utimeSpent = (new Date()) - statsObject.utimeSpent
         if (page) {
             closing = true
+            // bypass for test purpose
+            if (utils.getConfig().testMode) {
+                if (statsObject.failReason) {
+                    console.log(statsObject)
+                }
+                return
+            }
             Stats.create(statsObject, () => {
                 closeFn(page)
             })
+            closeFn(page)
         }
         console.log(statsObject)
     }
@@ -144,7 +152,7 @@ module.exports = async (page, closeFn, url, categoryName) => {
     })
     if (closing) return
     let category = categoryFound
-    if (!category) {
+    if (!category && !utils.getConfig().testMode) {
         category = await Category.create({ baseUrl, name: statsObject.categoryName }).catch(() => {
             statsObject.failReason = 'no new category'
             getOut()
@@ -162,24 +170,32 @@ module.exports = async (page, closeFn, url, categoryName) => {
         const name = $(el).find('div.card__body__infos > a').attr('href').split('/').pop()
 
         let _quit_ = false
+        const quitSequence = () => { _quit_ = true }
 
-        const userFound = await User.findOne({ name: username }).catch(() => { _quit_ = true })
+        // bypass for test purpose
+        if (utils.getConfig().testMode) {
+            const condition = true
+            console.log(`proposalIndex success => ${condition}`)
+            return
+        }
+
+        const userFound = await User.findOne({ name: username }).catch(quitSequence)
         if (_quit_) continue
         let user = userFound
-        if (!user) {
-            user = await User.create({ name: username }).catch(() => { _quit_ = true })
+        if (!user && !utils.getConfig().testMode) {
+            user = await User.create({ name: username }).catch(quitSequence)
             if (_quit_) continue
             statsObject.newUserNumber += 1
         }
 
-        const proposalFound = await Proposal.findOne({ name }).catch(() => { _quit_ = true })
+        const proposalFound = await Proposal.findOne({ name }).catch(quitSequence)
         if (_quit_) continue
-        if (!proposalFound) {
+        if (!proposalFound && !utils.getConfig().testMode) {
             await Proposal.create({
                 name,
                 user: user.id,
                 category: category.id,
-            }).catch(() => { _quit_ = true })
+            }).catch(quitSequence)
             if (_quit_) continue
 
             statsObject.newProposalNumber += 1

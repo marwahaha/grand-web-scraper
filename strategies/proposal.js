@@ -1,6 +1,8 @@
 const cheerio = require('cheerio')
 const moment = require('moment')
 
+const utils = require('../_utils')
+
 const Proposal = require('../models/proposal')
 
 module.exports = async (page, closeFn, url, proposalId) => {
@@ -18,6 +20,10 @@ module.exports = async (page, closeFn, url, proposalId) => {
 
     const dest = await page.goto(url).catch(getOut)
     if (dest.status() === 404) {
+        if (utils.getConfig().testMode) {
+            console.log('proposal error 404')
+            return
+        }
         // consider this (if found) as probably deleted since
         await Proposal.updateOne({ _id: proposalId }, {
             deleted: true,
@@ -51,9 +57,19 @@ module.exports = async (page, closeFn, url, proposalId) => {
             }
         }
 
-        await Proposal.updateOne({ _id: proposalId }, {
+        const obj = {
             registered, registeredText: dateAndHoursText, qna: QnA, infoFetched: true,
-        }).catch(getOut)
+        }
+
+        if (utils.getConfig().testMode) {
+            const condition = !!obj
+                && !!obj.registeredText && typeof obj.registeredText === 'string'
+                && !!obj.qna && typeof obj.qna === 'object'
+            console.log(`proposal success => ${condition}`)
+            return
+        }
+
+        await Proposal.updateOne({ _id: proposalId }, obj).catch(getOut)
     } catch (e) {
         console.log('ERROR:proposalPage -> info parsing', e)
         return

@@ -41,12 +41,12 @@ const domain = 'https://granddebat.fr';
         await utils.asyncPageRequestInterceptor(page).catch(console.log)
         return page
     }
-    const browserClose = (__page__) => {
+    const browserClose = async (__page__) => {
         if (__page__) {
-            __page__.close()
+            await __page__.close().catch()
         }
         if (pageNumber - 1 <= 0) {
-            browser.close()
+            await browser.close().catch()
             process.exit()
         }
         pageNumber--
@@ -71,7 +71,7 @@ const domain = 'https://granddebat.fr';
         const waitDelay = 3e3 // seconds
         console.log(`page.goto error ${dest.status()}...waiting ${waitDelay / 1e3} sec before closing...`)
         await utils.asyncDelay(waitDelay)
-        browserClose(page)
+        await browserClose(page)
     }
 
     const html = await page.content().catch((err) => {
@@ -86,7 +86,7 @@ const domain = 'https://granddebat.fr';
         const waitDelay = 45e3 // seconds
         console.log(`unable to read main page...waiting ${waitDelay / 1e3} sec before closing...`)
         await utils.asyncDelay(waitDelay)
-        browserClose(page)
+        await browserClose(page)
     }
 
     for (let i = links.length - 1; i >= 0; i--) {
@@ -139,7 +139,6 @@ const domain = 'https://granddebat.fr';
             return p
         })().catch(console.log)
 
-        // this little trick makes the script think the page isn't used anymore
         for (let i = fetchedItems.length - 1; i >= 0; i--) {
             const item = fetchedItems[i]
 
@@ -168,7 +167,7 @@ const domain = 'https://granddebat.fr';
         await asyncFetchInfos()
     }
 
-    browserClose(page)
+    await browserClose(page)
 })().catch((err) => {
     console.log('!!!!----FATAL ERROR----!!!!')
     console.log(err)

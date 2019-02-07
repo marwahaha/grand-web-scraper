@@ -1,6 +1,8 @@
 const cheerio = require('cheerio')
 const moment = require('moment')
 
+const utils = require('../_utils')
+
 const User = require('../models/user')
 
 module.exports = async (page, closeFn, url, userId) => {
@@ -19,6 +21,10 @@ module.exports = async (page, closeFn, url, userId) => {
     const dest = await page.goto(url).catch(getOut)
     // resource not found?
     if (dest.status() === 404) {
+        if (utils.getConfig().testMode) {
+            console.log('userProfile error 404')
+            return
+        }
         // then consider this (if found) as probably deleted since
         await User.updateOne({ _id: userId }, {
             deleted: true,
@@ -37,11 +43,19 @@ module.exports = async (page, closeFn, url, userId) => {
         const infos = $('ul.profile__infos > li').map(function () { return $(this).text() }).get()
         const date = infos[0].match(/([0-9/]+)/)[1]
 
-        await User.updateOne({ _id: userId }, {
+        const obj = {
             registered: moment(date, 'Do/MM/YYYY').toDate(),
             type: infos[1],
             infoFetched: true,
-        }).catch(getOut)
+        }
+
+        if (utils.getConfig().testMode) {
+            const condition = !!obj && !!obj.type && typeof obj.type === 'string'
+            console.log(`userProfile success => ${condition}`)
+            return
+        }
+
+        await User.updateOne({ _id: userId }, obj).catch(getOut)
     } catch (e) {
         console.log('ERROR:userProfile -> info parsing', e)
         return
