@@ -4,6 +4,7 @@ const config = {
     connectionString: 'mongodb://localhost:27017/db',
     chromePath: 'D:/Programs/chrome-win/chrome.exe',
     testMode: false,
+    domain: 'https://granddebat.fr',
 }
 
 module.exports = {

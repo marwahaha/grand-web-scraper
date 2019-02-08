@@ -14,10 +14,8 @@ const Proposal = require('./models/proposal')
 
 const proposalPageStrategy = require('./strategies/proposal')
 const userProfilePageStrategy = require('./strategies/userProfile')
-const proposalIndexPageStrategy = require('./strategies/proposalIndex')
+const proposalIndexPageStrategy = require('./strategies/proposalIndex');
 
-
-const domain = 'https://granddebat.fr';
 
 // -
 // - STEP 1
@@ -61,7 +59,7 @@ const domain = 'https://granddebat.fr';
 
     const page = await asyncNewPage().catch(console.log)
 
-    const dest = await page.goto(`${domain}/pages/partagez-vos-propositions`)
+    const dest = await page.goto(`${utils.getConfig().domain}/pages/partagez-vos-propositions`)
         .catch((err) => {
             console.log(err)
             browserClose(page)
@@ -96,7 +94,7 @@ const domain = 'https://granddebat.fr';
         const name = url.match(/\/project\/([^/]+)\//)[1]
 
         const newPage = await asyncNewPage().catch(console.log)
-        proposalIndexPageStrategy(newPage, browserClose, `${domain}${url}`, name)
+        proposalIndexPageStrategy(newPage, browserClose, `${utils.getConfig().domain}${url}`, name)
             .catch((err) => {
                 console.log(`proposalIndexPageStrategy broke for some reason on ${name}`, err)
                 browserClose()
@@ -151,7 +149,7 @@ const domain = 'https://granddebat.fr';
                     .catch(console.log)
             } else {
                 // this is a user
-                await doit(userProfilePageStrategy, `${domain}/profile/${item.name}`)
+                await doit(userProfilePageStrategy, `${utils.getConfig().domain}/profile/${item.name}`)
                     .catch(console.log)
             }
 

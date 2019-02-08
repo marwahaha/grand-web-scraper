@@ -1,6 +1,7 @@
-
-
 const cheerio = require('cheerio')
+
+const proposalPageStrategy = require('../strategies/proposal')
+const userProfilePageStrategy = require('../strategies/userProfile')
 
 const utils = require('../_utils')
 
@@ -158,6 +159,8 @@ module.exports = async (page, closeFn, url, categoryName) => {
     }
     if (closing) return
 
+    // we use an empty close function to avoid closing the page
+    const doit = async (_f, _u, _id) => _f(page, () => { }, _u, _id)
 
     for (let i = cards.length - 1; i >= 0; i--) {
         const el = cards[i]
@@ -183,18 +186,25 @@ module.exports = async (page, closeFn, url, categoryName) => {
         if (!user && !utils.getConfig().testMode) {
             user = await User.create({ name: username }).catch(quitSequence)
             if (_quit_) continue
+
             statsObject.newUserNumber += 1
+
+            await doit(userProfilePageStrategy, `${utils.getConfig().domain}/profile/${username}`, user.id)
+                .catch(console.log)
         }
 
         const proposalFound = await Proposal.findOne({ name }).catch(quitSequence)
         if (_quit_) continue
         if (!proposalFound && !utils.getConfig().testMode) {
-            await Proposal.create({
+            const proposal = await Proposal.create({
                 name,
                 user: user.id,
                 category: category.id,
             }).catch(quitSequence)
             if (_quit_) continue
+
+            await doit(proposalPageStrategy, `${category.baseUrl}${category.name}`, proposal.id)
+                .catch(console.log)
 
             statsObject.newProposalNumber += 1
         }
