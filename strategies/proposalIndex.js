@@ -38,7 +38,7 @@ module.exports = async (page, closeFn, url, categoryName) => {
     }
 
     let closing = false
-    const getOut = () => {
+    const getOut = async () => {
         statsObject.utimeSpent = (new Date()) - statsObject.utimeSpent
         if (page) {
             closing = true
@@ -49,9 +49,7 @@ module.exports = async (page, closeFn, url, categoryName) => {
                 }
                 return
             }
-            Stats.create(statsObject, () => {
-                closeFn(page)
-            })
+            await Stats.create(statsObject, () => {})
             closeFn(page)
         }
         console.log(statsObject)
