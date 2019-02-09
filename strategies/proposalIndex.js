@@ -69,16 +69,14 @@ module.exports = async (page, closeFn, url, categoryName) => {
     }
     if (closing) return
 
-    await page.waitForSelector(selectorForLoadMoreButton)
+    await page.waitForSelector('#proposal__step-page-rendered')
         .catch((err) => {
-            statsObject.failReason = 'no reload button?'
+            statsObject.failReason = 'error rendering content'
             statsObject.errObject = err
             getOut()
         })
     if (closing) return
 
-    await utils.asyncIsElementVisible(page, selectorForLoadMoreButton)
-    if (closing) return
     statsObject.utimeTotalWaited += await utils.asyncMiniDelay(page, 0)
     const sortingSelector = '#proposal-sorting'
     const filterSelector = '#proposal-filter-types'
@@ -110,40 +108,56 @@ module.exports = async (page, closeFn, url, categoryName) => {
         statsObject.typeOptionIndex = 1
     }
 
+    const loadCheerio = async () => {
+        const html = await page.content()
+            .catch((err) => {
+                statsObject.failReason = 'content fetch failed'
+                statsObject.errObject = err
+                getOut()
+            })
+        if (closing) return null
+        return cheerio.load(html)
+    }
+
+    let cards = []
+    const getTheLinks = async () => {
+        const $ = await loadCheerio()
+        if (closing || typeof $ !== 'function') return
+        const list = $('ul.media-list.proposal-preview-list > li')
+        if (list && list.length) cards = list
+    }
 
     let loadMoreVisible = await utils.asyncIsElementVisible(page, selectorForLoadMoreButton)
+
+    let $ = await loadCheerio()
+    if (closing || typeof $ !== 'function') return
+    statsObject.originalTextOnTotals = $('#details .proposal__step-page div > h3 > span').text()
+    const totalText = statsObject.originalTextOnTotals
+    statsObject.pretendedTotal = utils.prepareAndParseInt(totalText.match(/([0-9]+) prop/), 1)
+    statsObject.pretendedSubtotal = utils.prepareAndParseInt(totalText.match(/(.+) sur/), 1)
+    await getTheLinks()
+    const href = $(cards[0]).find('div.card__body__infos > a').attr('href')
+    const baseUrl = href && href.substr ? href.substr(0, href.length - href.split('/').pop().length) : null
+
     while (loadMoreVisible) {
         statsObject.utimeTotalWaited += await utils.asyncMiniDelay(page, 300)
         await page
             .click(selectorForLoadMoreButton)
             .catch(() => {})
+        await getTheLinks()
         loadMoreVisible = await utils.asyncIsElementVisible(page, selectorForLoadMoreButton)
     }
 
+    $ = await loadCheerio()
+    if (closing || typeof $ !== 'function') return
 
-    const html = await page.content()
-        .catch((err) => {
-            statsObject.failReason = 'content fetch failed'
-            statsObject.errObject = err
-            getOut()
-        })
-    if (closing) return
-    const $ = cheerio.load(html)
-    statsObject.originalTextOnTotals = $('#details .proposal__step-page div > h3 > span').text()
-    const totalText = statsObject.originalTextOnTotals
-    statsObject.pretendedTotal = utils.prepareAndParseInt(totalText.match(/([0-9]+) prop/), 1)
-    statsObject.pretendedSubtotal = utils.prepareAndParseInt(totalText.match(/(.+) sur/), 1)
+    await getTheLinks()
 
-    const cards = $('ul.media-list.proposal-preview-list > li')
-
-    const href = $(cards[0]).find('div.card__body__infos > a').attr('href')
-    const baseUrl = href && href.substr ? href.substr(0, href.length - href.split('/').pop().length) : null
     if (!baseUrl) {
         statsObject.failReason = 'no base url'
         getOut()
         return
     }
-
 
     const categoryFound = await Category.findOne({ baseUrl }).catch(() => {
         statsObject.failReason = 'category find failed'

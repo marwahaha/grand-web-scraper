@@ -24,8 +24,9 @@ const proposalIndexPageStrategy = require('./strategies/proposalIndex');
 // -
 
 (async () => {
+    // utils.setTestMode() // debug
     const browser = await puppeteer.launch({
-        // headless: false,
+        // headless: false, // debug
         executablePath: utils.getConfig().chromePath,
     }).catch((err) => {
         console.log('browser crashed maybe', err)
@@ -87,10 +88,12 @@ const proposalIndexPageStrategy = require('./strategies/proposalIndex');
         await browserClose(page)
     }
 
+    // const el = links[0] // debug
     for (let i = links.length - 1; i >= 0; i--) {
         const el = links[i]
 
         const url = el.attribs.href
+        // const url = '/project/democratie-et-citoyennete-1/collect/participez-a-la-recherche-collective-de-solutions' // debug
         const name = url.match(/\/project\/([^/]+)\//)[1]
 
         const newPage = await asyncNewPage().catch(console.log)

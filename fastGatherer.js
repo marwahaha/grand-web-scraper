@@ -15,7 +15,7 @@ require('./models/category') // load the schema that's all...
 const proposalPageStrategy = require('./strategies/proposal')
 const userProfilePageStrategy = require('./strategies/userProfile')
 
-const PROCESS_NUM = 4;
+const PROCESS_NUM = 3;
 
 // -
 // - STEP 1

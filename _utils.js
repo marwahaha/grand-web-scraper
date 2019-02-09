@@ -41,11 +41,11 @@ module.exports = {
         return visible
     },
 
-    // blocks images and fonts for a given request (small optimisation)
+    // blocks fonts for a given request (small optimisation)
     asyncPageRequestInterceptor: async (page) => {
         await page.setRequestInterception(true).catch((err) => { console.log(err) })
         page.on('request', (request) => {
-            if (['image', 'font'].indexOf(request.resourceType()) !== -1) {
+            if (['font'].indexOf(request.resourceType()) !== -1) {
                 request.abort()
             } else {
                 request.continue()
