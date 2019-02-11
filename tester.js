@@ -16,7 +16,7 @@ const User = require('./models/user')
 const Proposal = require('./models/proposal')
 
 const proposalPageStrategy = require('./strategies/proposal')
-const userProfilePageStrategy = require('./strategies/userProfile')
+const userProfilePageStrategy = require('./strategies/user')
 const proposalIndexPageStrategy = require('./strategies/proposalIndex')
 
 

@@ -61,6 +61,12 @@ module.exports = async (page, closeFn, url, proposalId) => {
             registered, registeredText: dateAndHoursText, qna: QnA, infoFetched: true,
         }
 
+        const proposal = await Proposal.findOne({ _id: proposalId })
+        if (proposal && proposal.deleted && proposal.deleted === true) {
+            obj.deleted = false
+            obj.undeleted = proposal.deleted ? proposal.deleted + 1 : 1
+        }
+
         if (utils.getConfig().testMode) {
             const condition = !!obj
                 && !!obj.registeredText && typeof obj.registeredText === 'string'

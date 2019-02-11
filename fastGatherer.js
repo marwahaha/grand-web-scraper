@@ -13,9 +13,9 @@ const Proposal = require('./models/proposal')
 require('./models/category') // load the schema that's all...
 
 const proposalPageStrategy = require('./strategies/proposal')
-const userProfilePageStrategy = require('./strategies/userProfile')
+const userProfilePageStrategy = require('./strategies/user')
 
-const PROCESS_NUM = 3;
+const PROCESS_NUM = 2;
 
 // -
 // - STEP 1
@@ -68,12 +68,15 @@ const PROCESS_NUM = 3;
                 }
             }
 
-            const rule = { infoFetched: { $ne: true }, deleted: { $ne: true } }
+            // check unchecked and undeleted data
+            // const rule = { infoFetched: { $ne: true }, deleted: { $ne: true } }
+            // recheck or "regather" the data
+            const rule = { infoFetched: true }
 
             calls++
-            User.find(rule, handleResolve)
+            User.find(rule, handleResolve).limit(250)
             calls++
-            Proposal.find(rule, handleResolve).populate('category')
+            Proposal.find(rule, handleResolve).populate('category').limit(250)
         })
         return p
     })().catch(console.log)

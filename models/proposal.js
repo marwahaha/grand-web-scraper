@@ -11,6 +11,7 @@ const proposalSchema = new Schema({
     registeredText: { type: String },
     qna: [Schema.Types.Mixed],
     deleted: { type: Boolean, default: false },
+    undeleted: { type: Number, default: 0 },
 })
 
 module.exports = mongoose.model('Proposal', proposalSchema)

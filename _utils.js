@@ -75,19 +75,3 @@ module.exports = {
         return 0
     },
 }
-// -
-// - STEP 1
-// -
-// - launch an async function and initiate a pupeteer browser
-// -
-// -
-// - STEP 2
-// -
-// - first scrape the index page to check on category
-// - second launch a new page with a scrape strategy for each category found
-// -
-// -
-// - STEP 3
-// -
-// - scrape user and proposal pages while waiting for the other pages to die
-// -

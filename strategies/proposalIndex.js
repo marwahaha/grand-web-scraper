@@ -1,7 +1,7 @@
 const cheerio = require('cheerio')
 
 const proposalPageStrategy = require('../strategies/proposal')
-const userProfilePageStrategy = require('../strategies/userProfile')
+const userProfilePageStrategy = require('./user')
 
 const utils = require('../_utils')
 

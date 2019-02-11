@@ -8,6 +8,7 @@ const userSchema = new Schema({
     registered: { type: Date },
     type: { type: String },
     deleted: { type: Boolean, default: false },
+    undeleted: { type: Number, default: 0 },
 })
 
 userSchema.index({ name: 1 }, { unique: true })

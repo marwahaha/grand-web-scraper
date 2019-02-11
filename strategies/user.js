@@ -49,6 +49,12 @@ module.exports = async (page, closeFn, url, userId) => {
             infoFetched: true,
         }
 
+        const user = await User.findOne({ _id: userId })
+        if (user && user.deleted && user.deleted === true) {
+            obj.deleted = false
+            obj.undeleted = user.deleted ? user.deleted + 1 : 1
+        }
+
         if (utils.getConfig().testMode) {
             const condition = !!obj && !!obj.type && typeof obj.type === 'string'
             console.log(`userProfile success => ${condition}`)
