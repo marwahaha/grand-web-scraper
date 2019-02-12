@@ -16,7 +16,13 @@ const Category = require('../models/category');
 
     let total = 0
     for (let i = categories.length - 1; i >= 0; i--) {
-        const stat = await Stats.find({ categoryName: categories[i].name }).sort({ created: -1 }).limit(1)
+        const query = {
+            categoryName: categories[i].name,
+            sortOption: 'random', // random gives us real number
+            completeCollectFailed: false, // last successful entry
+        }
+        // only one entry per category
+        const stat = await Stats.find(query).sort({ created: -1 }).limit(1)
         if (stat && stat.length === 1) total += stat[0].pretendedTotal
     }
 
