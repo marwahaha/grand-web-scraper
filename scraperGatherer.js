@@ -88,12 +88,10 @@ const proposalIndexPageStrategy = require('./strategies/proposalIndex');
         await browserClose(page)
     }
 
-    // const el = links[0] // debug
     for (let i = links.length - 1; i >= 0; i--) {
         const el = links[i]
 
         const url = el.attribs.href
-        // const url = '/project/democratie-et-citoyennete-1/collect/participez-a-la-recherche-collective-de-solutions' // debug
         const name = url.match(/\/project\/([^/]+)\//)[1]
 
         const newPage = await asyncNewPage().catch(console.log)
@@ -115,7 +113,7 @@ const proposalIndexPageStrategy = require('./strategies/proposalIndex');
         // we need a promise so we can fetch asynchronously both users and proposals
         // but also wait up until the very end of both requests
         let fetchedItems = []
-        await (() => {
+        const fetchItems = (rule) => {
             const p = new Promise((resolve, reject) => {
                 let calls = 0
                 const handleResolve = (err, res) => {
@@ -130,15 +128,17 @@ const proposalIndexPageStrategy = require('./strategies/proposalIndex');
                     }
                 }
 
-                const rule = { infoFetched: { $ne: true }, deleted: { $ne: true } }
-
                 calls++
-                User.find(rule, handleResolve).limit(25)
+                User.find(rule, handleResolve).limit(50)
                 calls++
-                Proposal.find(rule, handleResolve).populate('category').limit(25)
+                Proposal.find(rule, handleResolve).populate('category').limit(50)
             })
             return p
-        })().catch(console.log)
+        }
+
+        // first attempt will try to fetch unfetched items
+        fetchItems({ infoFetched: { $ne: true }, deleted: { $ne: true } })
+        if (fetchedItems.length === 0) fetchItems({ infoFetched: true })
 
         for (let i = fetchedItems.length - 1; i >= 0; i--) {
             const item = fetchedItems[i]
