@@ -82,10 +82,6 @@ module.exports = async (page, closeFn, url, categoryName) => {
     const filterSelector = '#proposal-filter-types'
 
 
-    // await page.select(sortingSelector, 'last')
-    // statsObject.sortOption = 'last'
-
-
     const roll = Math.round(Math.random() * 100)
     if (roll < 5) { // 5% check first (shouldn't change much)
         await page.select(sortingSelector, 'old')
@@ -107,6 +103,7 @@ module.exports = async (page, closeFn, url, categoryName) => {
         statsObject.typeOption = `${whosWhat[1]}`
         statsObject.typeOptionIndex = 1
     }
+
 
     const loadCheerio = async () => {
         const html = await page.content()
@@ -139,6 +136,7 @@ module.exports = async (page, closeFn, url, categoryName) => {
     const href = $(cards[0]).find('div.card__body__infos > a').attr('href')
     const baseUrl = href && href.substr ? href.substr(0, href.length - href.split('/').pop().length) : null
 
+    // TODO: rework the code to insert new elements while spamming the "load more" button
     while (loadMoreVisible) {
         statsObject.utimeTotalWaited += await utils.asyncMiniDelay(page, 300)
         await page
@@ -176,6 +174,7 @@ module.exports = async (page, closeFn, url, categoryName) => {
     // we use an empty close function to avoid closing the page
     const doit = async (_f, _u, _id) => _f(page, () => { }, _u, _id)
 
+    // TODO: rework the code to insert new elements while spamming the "load more" button
     for (let i = cards.length - 1; i >= 0; i--) {
         const el = cards[i]
 

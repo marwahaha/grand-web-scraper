@@ -118,9 +118,11 @@ const proposalIndexPageStrategy = require('./strategies/proposalIndex');
                 let calls = 0
                 const handleResolve = (err, res) => {
                     if (calls) {
+                        console.log('handleResolve', fetchItems.length, res.length)
                         if (err) {
                             calls = 0
                             reject(err)
+                            return
                         }
                         fetchedItems = utils.concatAndMix(fetchedItems, res)
                         if (calls - 1 <= 0) resolve()
@@ -129,16 +131,17 @@ const proposalIndexPageStrategy = require('./strategies/proposalIndex');
                 }
 
                 calls++
-                User.find(rule, handleResolve).limit(50)
+                User.find(rule, handleResolve).limit(20)
                 calls++
-                Proposal.find(rule, handleResolve).populate('category').limit(50)
+                Proposal.find(rule, handleResolve).populate('category').limit(20)
             })
             return p
         }
 
         // first attempt will try to fetch unfetched items
-        fetchItems({ infoFetched: { $ne: true }, deleted: { $ne: true } })
-        if (fetchedItems.length === 0) fetchItems({ infoFetched: true })
+        await fetchItems({ infoFetched: { $ne: true }, deleted: { $ne: true } })
+        // if there is no unfetched items left, check the previously fetched ones
+        if (fetchedItems.length === 0) await fetchItems({ infoFetched: true })
 
         for (let i = fetchedItems.length - 1; i >= 0; i--) {
             const item = fetchedItems[i]
