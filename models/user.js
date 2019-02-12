@@ -6,6 +6,7 @@ const userSchema = new Schema({
     name: { type: String, required: true },
     infoFetched: { type: Boolean, default: false },
     registered: { type: Date },
+    updated: { type: Date },
     type: { type: String },
     deleted: { type: Boolean, default: false },
     undeleted: { type: Number, default: 0 },

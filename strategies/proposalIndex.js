@@ -136,7 +136,7 @@ module.exports = async (page, closeFn, url, categoryName) => {
     const href = $(cards[0]).find('div.card__body__infos > a').attr('href')
     const baseUrl = href && href.substr ? href.substr(0, href.length - href.split('/').pop().length) : null
 
-    // TODO: rework the code to insert new elements while spamming the "load more" button
+    // TODO: MAYBE rework the code to insert new elements while spamming the "load more" button
     while (loadMoreVisible) {
         statsObject.utimeTotalWaited += await utils.asyncMiniDelay(page, 300)
         await page
@@ -174,7 +174,7 @@ module.exports = async (page, closeFn, url, categoryName) => {
     // we use an empty close function to avoid closing the page
     const doit = async (_f, _u, _id) => _f(page, () => { }, _u, _id)
 
-    // TODO: rework the code to insert new elements while spamming the "load more" button
+    // TODO: MAYBE rework the code to insert new elements while spamming the "load more" button
     for (let i = cards.length - 1; i >= 0; i--) {
         const el = cards[i]
 

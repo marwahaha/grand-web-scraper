@@ -67,6 +67,9 @@ module.exports = async (page, closeFn, url, proposalId) => {
             obj.undeleted = proposal.deleted ? proposal.deleted + 1 : 1
         }
 
+        // mark proposal as updated
+        if (proposal) obj.updated = new Date()
+
         if (utils.getConfig().testMode) {
             const condition = !!obj
                 && !!obj.registeredText && typeof obj.registeredText === 'string'

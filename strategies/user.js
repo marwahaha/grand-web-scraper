@@ -55,6 +55,9 @@ module.exports = async (page, closeFn, url, userId) => {
             obj.undeleted = user.deleted ? user.deleted + 1 : 1
         }
 
+        // mark user as updated
+        if (user) obj.updated = new Date()
+
         if (utils.getConfig().testMode) {
             const condition = !!obj && !!obj.type && typeof obj.type === 'string'
             console.log(`userProfile success => ${condition}`)

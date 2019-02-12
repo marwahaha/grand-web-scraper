@@ -118,7 +118,6 @@ const proposalIndexPageStrategy = require('./strategies/proposalIndex');
                 let calls = 0
                 const handleResolve = (err, res) => {
                     if (calls) {
-                        console.log('handleResolve', fetchItems.length, res.length)
                         if (err) {
                             calls = 0
                             reject(err)
@@ -131,9 +130,9 @@ const proposalIndexPageStrategy = require('./strategies/proposalIndex');
                 }
 
                 calls++
-                User.find(rule, handleResolve).limit(20)
+                User.find(rule, handleResolve).limit(50)
                 calls++
-                Proposal.find(rule, handleResolve).populate('category').limit(20)
+                Proposal.find(rule, handleResolve).populate('category').limit(50)
             })
             return p
         }
