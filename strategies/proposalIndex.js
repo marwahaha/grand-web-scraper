@@ -11,13 +11,6 @@ const Proposal = require('../models/proposal')
 const Stats = require('../models/stats')
 
 
-// TODO: eventually scrape the values too
-const whosWhat = []
-whosWhat[1] = 'Citoyen / Citoyenne'
-whosWhat[4] = 'Élu / élue et Institution'
-whosWhat[2] = 'Organisation à but lucratif'
-whosWhat[3] = 'Organisation à but non lucratif'
-
 const selectorForLoadMoreButton = '#proposal-list-pagination-footer button'
 
 module.exports = async (page, closeFn, url, categoryName) => {
@@ -27,7 +20,7 @@ module.exports = async (page, closeFn, url, categoryName) => {
         newProposalNumber: 0,
         sortOption: 'random',
         typeOption: 'n/a',
-        typeOptionIndex: 1,
+        typeOptionIndex: -1,
         originalTextOnTotals: '',
         pretendedTotal: -1,
         pretendedSubtotal: -1,
@@ -79,11 +72,6 @@ module.exports = async (page, closeFn, url, categoryName) => {
 
     statsObject.utimeTotalWaited += await utils.asyncMiniDelay(page, 0)
     const sortingSelector = '#proposal-sorting'
-    // const filterSelector = '#proposal-filter-types'
-
-
-    // await page.select(sortingSelector, 'last')
-    // statsObject.sortOption = 'last'
 
 
     const roll = Math.round(Math.random() * 100)
@@ -96,21 +84,6 @@ module.exports = async (page, closeFn, url, categoryName) => {
     } // 85% chance to leave it to 'random'
     await utils.asyncIsElementVisible(page, selectorForLoadMoreButton)
     statsObject.utimeTotalWaited += await utils.asyncMiniDelay(page, 0)
-
-    // const reroll = Math.round(Math.random() * 100)
-    // if (reroll < 5) { // 5% for any of the fewer groups
-    //     const subreroll = Math.floor(Math.random() * 3 + 2)
-    //     await page.select(filterSelector, subreroll.toString())
-    //     statsObject.typeOption = `${whosWhat[subreroll]}`
-    //     statsObject.typeOptionIndex = subreroll
-    // } else { // 95% chance for option "Citoyen / Citoyenne" which is the biggest group
-    //     await page.select(filterSelector, '1')
-    //     statsObject.typeOption = `${whosWhat[1]}`
-    //     statsObject.typeOptionIndex = 1
-    // }
-
-    statsObject.typeOption = 'n/a'
-    statsObject.typeOptionIndex = -1
 
 
     const loadCheerio = async () => {
@@ -139,7 +112,6 @@ module.exports = async (page, closeFn, url, categoryName) => {
     statsObject.originalTextOnTotals = $('#details .proposal__step-page div > h3 > span').text()
     const totalText = statsObject.originalTextOnTotals
     statsObject.pretendedTotal = utils.prepareAndParseInt(totalText.match(/(.+) prop/), 1)
-    // statsObject.pretendedSubtotal = utils.prepareAndParseInt(totalText.match(/(.+) sur/), 1)
     statsObject.pretendedSubtotal = -1
     await getTheLinks()
     const href = $(cards[0]).find('div.card__body__infos > a').attr('href')
