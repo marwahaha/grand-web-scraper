@@ -130,9 +130,9 @@ const proposalIndexPageStrategy = require('./strategies/proposalIndex');
                 }
 
                 calls++
-                User.find(rule, handleResolve).limit(50)
+                User.find(rule, handleResolve).limit(500)
                 calls++
-                Proposal.find(rule, handleResolve).populate('category').limit(50)
+                Proposal.find(rule, handleResolve).populate('category').limit(500)
             })
             return p
         }

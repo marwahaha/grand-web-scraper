@@ -118,7 +118,7 @@ module.exports = async (page, closeFn, url, categoryName) => {
     const baseUrl = href && href.substr ? href.substr(0, href.length - href.split('/').pop().length) : null
 
     // TODO: MAYBE rework the code to insert new elements while spamming the "load more" button
-    while (loadMoreVisible) {
+    while (!utils.getConfig().testMode && loadMoreVisible) {
         statsObject.utimeTotalWaited += await utils.asyncMiniDelay(page, 300)
         await page
             .click(selectorForLoadMoreButton)
