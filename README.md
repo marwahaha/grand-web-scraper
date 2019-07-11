@@ -1,7 +1,7 @@
 Grand-web-scraper (Deprecated)
 ==============================
 
-Project "abandonned" for the data is accessible through the API. Fun project tho.
+Project "abandoned" for the data is accessible through the API. Fun project tho.
 
 This is a not very optimized scraper.
 This scraper is suspected to never be able to get all of the info (and the gathering has a time complexity probably worse than `O(n ^ n)`).
